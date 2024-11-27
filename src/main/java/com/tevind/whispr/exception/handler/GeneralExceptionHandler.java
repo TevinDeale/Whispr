@@ -2,9 +2,8 @@ package com.tevind.whispr.exception.handler;
 
 import com.tevind.whispr.dto.responses.ErrorResponseDto;
 import com.tevind.whispr.dto.converter.DtoConverter;
-import com.tevind.whispr.exception.DuplicateAttributeException;
-import com.tevind.whispr.exception.ProfileNotFoundException;
-import com.tevind.whispr.exception.UserNotFoundException;
+import com.tevind.whispr.exception.*;
+import io.jsonwebtoken.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,8 +29,7 @@ public class GeneralExceptionHandler {
             WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(buildErrorResponse(err, request, HttpStatus.NOT_FOUND)
-                );
+                .body(buildErrorResponse(err, request, HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -40,8 +38,7 @@ public class GeneralExceptionHandler {
             WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(buildErrorResponse(err, request, HttpStatus.NOT_FOUND)
-                );
+                .body(buildErrorResponse(err, request, HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(DuplicateAttributeException.class)
@@ -50,8 +47,25 @@ public class GeneralExceptionHandler {
             WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST)
-                );
+                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(JwtTokenErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleJwtTokenErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(buildErrorResponse(err, request, HttpStatus.UNAUTHORIZED));
+    }
+
+    @ExceptionHandler(AuthenticationErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(buildErrorResponse(err, request, HttpStatus.UNAUTHORIZED));
     }
 
     private String getPath(WebRequest request) {

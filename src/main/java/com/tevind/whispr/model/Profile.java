@@ -25,7 +25,6 @@ public class Profile {
     @OneToOne
     @MapsId
     @JoinColumn(name = "userId")
-    @Column(nullable = false)
     private User user;
 
     @Column(nullable = false)

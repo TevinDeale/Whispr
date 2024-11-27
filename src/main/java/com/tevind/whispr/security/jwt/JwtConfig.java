@@ -1,4 +1,4 @@
-package com.tevind.whispr.jwt;
+package com.tevind.whispr.security.jwt;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
