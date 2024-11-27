@@ -1,21 +1,19 @@
 package com.tevind.whispr.service;
 
+import com.tevind.whispr.dto.converter.DtoConverter;
 import com.tevind.whispr.dto.entity.UserDto;
-import com.tevind.whispr.enums.AccountRoles;
 import com.tevind.whispr.exception.DuplicateAttributeException;
+import com.tevind.whispr.exception.ProfileErrorException;
 import com.tevind.whispr.exception.UserNotFoundException;
+import com.tevind.whispr.model.Profile;
 import com.tevind.whispr.model.User;
 import com.tevind.whispr.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,19 +24,22 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder encoder;
+    private final ProfileService profileService;
 
+    @Transactional
     public User createUser(UserDto dto) {
         log.debug("Creating user with username: {}", dto.getUserName());
         isDuplicateAttribute(dto.getUserName(), dto.getEmail());
 
-        User createdUser = User.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .userName(dto.getUserName())
-                .email(dto.getEmail())
-                .password(encoder.encode(dto.getPassword()))
-                .accountRoles(new HashSet<>(List.of(AccountRoles.USER)))
-                .build();
+        User createdUser = DtoConverter.toUser(dto);
+        createdUser.setPassword(encoder.encode(dto.getPassword()));
+
+        Profile createdProfile = profileService.createProfile(createdUser);
+
+        if (createdProfile == null) {
+            log.error("Error creating profile with username: {}", createdUser.getUserName());
+            throw new ProfileErrorException("There was error creating the profile from the user");
+        }
 
         log.debug("Successfully created user with username: {}", createdUser.getUserName());
         return repository.save(createdUser);

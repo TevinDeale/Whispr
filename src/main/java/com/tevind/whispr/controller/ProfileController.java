@@ -1,11 +1,13 @@
 package com.tevind.whispr.controller;
 
+import com.tevind.whispr.dto.converter.DtoConverter;
+import com.tevind.whispr.dto.responses.ProfileResponseDto;
 import com.tevind.whispr.dto.responses.UserResponseDto;
 import com.tevind.whispr.exception.AuthenticationErrorException;
-import com.tevind.whispr.model.User;
+import com.tevind.whispr.model.Profile;
 import com.tevind.whispr.security.CustomUserDetails;
+import com.tevind.whispr.service.ProfileService;
 import com.tevind.whispr.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,25 +19,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("/api/v1/profile")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
+public class ProfileController {
 
-    private final UserService userService;
+    private final ProfileService profileService;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getUser() {
+    public ResponseEntity<ProfileResponseDto> getUser() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(getUserResponse());
+                .body(getProfileResponse());
     }
 
-    private UserResponseDto getUserResponse() {
+    private ProfileResponseDto getProfileResponse() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            return userDetails.getUser();
+            UserResponseDto userResponseDto = userDetails.getUser();
+            Profile profile = profileService.findByDisplayName(userResponseDto.getUsername());
+            return DtoConverter.toProfileResponse(profile, userResponseDto);
         } catch (Exception err) {
             log.debug("Error getting user from security context");
             throw new AuthenticationErrorException("Error getting user from security context");

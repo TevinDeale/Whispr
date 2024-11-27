@@ -1,21 +1,17 @@
 package com.tevind.whispr.dto.responses;
 
 import com.tevind.whispr.enums.ProfileStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDto extends BaseResponseDto{
+public class ProfileResponseDto{
 
     private UUID profileId;
 
@@ -24,4 +20,6 @@ public class ProfileResponseDto extends BaseResponseDto{
     private ProfileStatus status;
 
     private LocalDateTime lastSeen;
+
+    private UserResponseDto userResponseDto;
 }

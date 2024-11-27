@@ -1,0 +1,5 @@
+### POST register new user
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###

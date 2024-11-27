@@ -3,7 +3,6 @@ package com.tevind.whispr.exception.handler;
 import com.tevind.whispr.dto.responses.ErrorResponseDto;
 import com.tevind.whispr.dto.converter.DtoConverter;
 import com.tevind.whispr.exception.*;
-import io.jsonwebtoken.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,6 +65,24 @@ public class GeneralExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(buildErrorResponse(err, request, HttpStatus.UNAUTHORIZED));
+    }
+
+    @ExceptionHandler(ProfileErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleProfileErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(AccountNotActiveException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccountNotActiveException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(buildErrorResponse(err, request, HttpStatus.FORBIDDEN));
     }
 
     private String getPath(WebRequest request) {

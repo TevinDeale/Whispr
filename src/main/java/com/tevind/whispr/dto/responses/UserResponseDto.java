@@ -1,22 +1,18 @@
 package com.tevind.whispr.dto.responses;
 
 import com.tevind.whispr.enums.AccountRoles;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
-@SuperBuilder
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDto extends BaseResponseDto{
+public class UserResponseDto {
 
     private UUID userId;
     private String firstName;
