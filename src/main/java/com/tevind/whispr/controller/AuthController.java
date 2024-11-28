@@ -1,5 +1,6 @@
 package com.tevind.whispr.controller;
 
+import com.tevind.whispr.dto.converter.DtoConverter;
 import com.tevind.whispr.dto.entity.LoginDto;
 import com.tevind.whispr.dto.entity.TokenDto;
 import com.tevind.whispr.dto.responses.AuthResponseDto;
@@ -31,6 +32,6 @@ public class AuthController {
     }
 
     private AuthResponseDto createdAuthResponse(TokenDto tokenDto) {
-        return new AuthResponseDto(tokenDto.getToken(), tokenDto.getExpiration());
+        return DtoConverter.toAuthResponse(tokenDto.getToken(), tokenDto.getExpiration());
     }
 }

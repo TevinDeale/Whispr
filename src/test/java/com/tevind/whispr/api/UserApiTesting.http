@@ -15,7 +15,7 @@ POST http://localhost:8083/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "username": "testUser",
+  "username": "testUser1",
   "password": "TestPassword1$"
 }
 
