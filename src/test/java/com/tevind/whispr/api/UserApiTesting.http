@@ -1,5 +1,26 @@
 ### POST register new user
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
+POST http://localhost:8083/api/v1/profile/register
+Content-Type: application/json
 
-###
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "userName": "testUser1",
+  "email": "testuser@example.com",
+  "password": "TestPassword1$"
+}
+
+### POST login user
+POST http://localhost:8083/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "testUser",
+  "password": "TestPassword1$"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+### GET get user profile
+GET http://localhost:8083/api/v1/profile/me
+Authorization: Bearer {{auth_token}}

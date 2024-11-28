@@ -10,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class ErrorResponseDto extends BaseResponseDto {
 
-    private String exceptionName;
     private String path;
     private int statusCode;
 }

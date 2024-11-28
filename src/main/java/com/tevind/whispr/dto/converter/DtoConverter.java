@@ -16,11 +16,10 @@ import java.util.List;
 
 public class DtoConverter {
 
-    public static ErrorResponseDto toErrorResponse(String message, String exceptionName, String path, int statusCode) {
+    public static ErrorResponseDto toErrorResponse(String message, String path, int statusCode) {
         return ErrorResponseDto.builder()
-                .timestamp(LocalDate.now())
+                .timestamp(LocalDateTime.now())
                 .message(message)
-                .exceptionName(exceptionName)
                 .path(path)
                 .statusCode(statusCode)
                 .build();
@@ -62,7 +61,7 @@ public class DtoConverter {
 
     public static AuthResponseDto toAuthResponse(String token, LocalDateTime expiration) {
         return AuthResponseDto.builder()
-                .timestamp(LocalDate.now())
+                .timestamp(LocalDateTime.now())
                 .message("Authentication Successful")
                 .token(token)
                 .expiration(expiration)

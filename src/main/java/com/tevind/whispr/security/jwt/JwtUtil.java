@@ -108,7 +108,7 @@ public class JwtUtil {
     public String getTokenFromRequest(HttpServletRequest request) {
         try {
             log.debug("Processing token from request");
-            String token = request.getHeader("Authentication");
+            String token = request.getHeader("Authorization");
 
             log.debug("Token pulled from Authentication header: {}", token);
 

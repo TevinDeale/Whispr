@@ -1,10 +1,12 @@
 package com.tevind.whispr.controller;
 
 import com.tevind.whispr.dto.converter.DtoConverter;
+import com.tevind.whispr.dto.entity.UserDto;
 import com.tevind.whispr.dto.responses.ProfileResponseDto;
 import com.tevind.whispr.dto.responses.UserResponseDto;
 import com.tevind.whispr.exception.AuthenticationErrorException;
 import com.tevind.whispr.model.Profile;
+import com.tevind.whispr.model.User;
 import com.tevind.whispr.security.CustomUserDetails;
 import com.tevind.whispr.service.ProfileService;
 import com.tevind.whispr.service.UserService;
@@ -14,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/profile")
@@ -25,12 +25,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<ProfileResponseDto> getUser() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(getProfileResponse());
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ProfileResponseDto> registerUser(@RequestBody UserDto userDto) {
+        log.debug("Registering user with username: {}", userDto.getUserName());
+        User user = userService.createUser(userDto);
+        Profile profile = profileService.findByDisplayName(user.getUserName());
+
+        UserResponseDto userResponseDto = DtoConverter.toUserResponse(user);
+        ProfileResponseDto profileResponseDto = DtoConverter.toProfileResponse(profile, userResponseDto);
+
+        log.debug("Successfully registered user");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(profileResponseDto);
     }
 
     private ProfileResponseDto getProfileResponse() {

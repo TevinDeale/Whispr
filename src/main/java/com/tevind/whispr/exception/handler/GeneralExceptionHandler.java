@@ -85,6 +85,15 @@ public class GeneralExceptionHandler {
                 .body(buildErrorResponse(err, request, HttpStatus.FORBIDDEN));
     }
 
+    @ExceptionHandler(SessionErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleSessionErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildErrorResponse(err, request, HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
     private String getPath(WebRequest request) {
         return ((ServletWebRequest) request).getRequest().getRequestURI();
     }
@@ -93,14 +102,9 @@ public class GeneralExceptionHandler {
         return err.getMessage();
     }
 
-    private String getErrName(Exception err) {
-        return err.getClass().getName();
-    }
-
     private ErrorResponseDto buildErrorResponse(Exception err, WebRequest request, HttpStatus status) {
         return DtoConverter.toErrorResponse(
                 getErrMessage(err),
-                getErrName(err),
                 getPath(request),
                 status.value()
         );

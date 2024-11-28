@@ -2,6 +2,7 @@ package com.tevind.whispr.service;
 
 import com.tevind.whispr.dto.converter.DtoConverter;
 import com.tevind.whispr.dto.entity.UserDto;
+import com.tevind.whispr.enums.AccountRoles;
 import com.tevind.whispr.exception.DuplicateAttributeException;
 import com.tevind.whispr.exception.ProfileErrorException;
 import com.tevind.whispr.exception.UserNotFoundException;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -33,6 +36,7 @@ public class UserService {
 
         User createdUser = DtoConverter.toUser(dto);
         createdUser.setPassword(encoder.encode(dto.getPassword()));
+        createdUser.setAccountRoles(defaultUserRole());
 
         Profile createdProfile = profileService.createProfile(createdUser);
 
@@ -79,6 +83,12 @@ public class UserService {
 
         log.debug("Found user with email: {}", email);
         return foundUser;
+    }
+
+    private Set<AccountRoles> defaultUserRole() {
+        Set<AccountRoles> userRole = new HashSet<>();
+        userRole.add(AccountRoles.USER);
+        return userRole;
     }
 
     private void isDuplicateAttribute(String username, String email) {

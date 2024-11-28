@@ -18,18 +18,31 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
 @Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
+    public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+        log.debug("Authfilter being constructed");
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/api/v1/auth/login") ||
+                path.startsWith("/api/v1/profile/register") ||
+                path.startsWith("/api/v2/auth/logout");
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtUtil.getTokenFromRequest(request);
-
         try {
+            log.debug("Retrieving token from request");
+            String token = jwtUtil.getTokenFromRequest(request);
             log.debug("Request to: {} with token: {}", request.getRequestURI(), token != null ? "present" : "null");
             String requestPath = request.getRequestURI();
             if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -38,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Boolean isValidToken = jwtUtil.isTokenExpired(token);
                 log.debug("Token validation result: {} for path: {}", isValidToken, requestPath);
 
-                if (Boolean.TRUE.equals(isValidToken)) {
+                if (Boolean.FALSE.equals(isValidToken)) {
                     String username = jwtUtil.getUsername(token);
                     log.debug("JWT validation starting for user: {} on path: {}", username, requestPath);
 
@@ -73,13 +86,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilterAsyncDispatch() {
-        return true;
-    }
-
-    @Override
-    protected boolean shouldNotFilterErrorDispatch() {
-        return true;
-    }
 }

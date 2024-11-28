@@ -3,6 +3,7 @@ package com.tevind.whispr.security;
 import com.tevind.whispr.security.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,8 @@ public class SecurityConfig {
                         .contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'")))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/logout").permitAll()
-                        .requestMatchers("/api/v1/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/profile/register").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/actuator/**").hasAnyAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);

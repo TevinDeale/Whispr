@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
@@ -13,6 +14,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class BaseResponseDto {
 
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
     private String message;
 }
