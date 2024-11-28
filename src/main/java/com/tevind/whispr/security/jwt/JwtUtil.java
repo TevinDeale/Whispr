@@ -112,6 +112,11 @@ public class JwtUtil {
 
             log.debug("Token pulled from Authentication header: {}", token);
 
+            if (token == null) {
+                log.debug("Token is null");
+                throw new JwtTokenErrorException("Token is not present in header or malformed");
+            }
+
             if (!token.startsWith("Bearer ")) {
                 log.warn("Token is not a Bearer token: {}", token);
                 throw new JwtTokenErrorException("Token is not a Bearer token");

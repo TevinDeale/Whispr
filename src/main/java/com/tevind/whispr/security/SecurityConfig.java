@@ -1,5 +1,6 @@
 package com.tevind.whispr.security;
 
+import com.tevind.whispr.exception.handler.JwtAuthenticationEntryPoint;
 import com.tevind.whispr.security.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +21,18 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 public class SecurityConfig {
 
     private final JwtAuthFilter authFilter;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(JwtAuthFilter authFilter) {
+    public SecurityConfig(JwtAuthFilter authFilter, JwtAuthenticationEntryPoint authenticationEntryPoint) {
         this.authFilter = authFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws  Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(handle -> handle.authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
@@ -39,8 +43,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/profile/register").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/actuator/**").hasAnyAuthority("ROLE_ADMIN")
-                        .anyRequest().authenticated())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated());
+
+        http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

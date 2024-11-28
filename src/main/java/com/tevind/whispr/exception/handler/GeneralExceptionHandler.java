@@ -3,6 +3,7 @@ package com.tevind.whispr.exception.handler;
 import com.tevind.whispr.dto.responses.ErrorResponseDto;
 import com.tevind.whispr.dto.converter.DtoConverter;
 import com.tevind.whispr.exception.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,12 +12,14 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
+@Slf4j
 public class GeneralExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(
             Exception err,
             WebRequest request) {
+        log.debug("Handling general exception");
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildErrorResponse(err, request, HttpStatus.INTERNAL_SERVER_ERROR));
