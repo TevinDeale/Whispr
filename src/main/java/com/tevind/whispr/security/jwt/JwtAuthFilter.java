@@ -3,11 +3,11 @@ package com.tevind.whispr.security.jwt;
 import com.tevind.whispr.exception.AuthenticationErrorException;
 import com.tevind.whispr.exception.JwtTokenErrorException;
 import com.tevind.whispr.security.CustomUserDetailsService;
+import com.tevind.whispr.security.session.SessionService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,11 +23,13 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final SessionService sessionService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+    public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService, SessionService sessionService) {
         log.debug("Authfilter being constructed");
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         return path.startsWith("/api/v1/auth/login") ||
                 path.startsWith("/api/v1/profile/register") ||
-                path.startsWith("/api/v2/auth/logout");
+                path.startsWith("/api/v1/auth/logout");
     }
 
     @Override
@@ -48,10 +50,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 log .debug("Processing authentication for token on path: {}", requestPath);
 
-                Boolean isValidToken = jwtUtil.isTokenExpired(token);
-                log.debug("Token validation result: {} for path: {}", isValidToken, requestPath);
+                Boolean isValid = isValidSession(token);
+                log.debug("Session validation result: {} for path: {}", isValid, requestPath);
 
-                if (Boolean.FALSE.equals(isValidToken)) {
+                if (Boolean.TRUE.equals(isValid)) {
                     String username = jwtUtil.getUsername(token);
                     log.debug("JWT validation starting for user: {} on path: {}", username, requestPath);
 
@@ -84,6 +86,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private Boolean isValidSession(String token) {
+        Boolean isValid = sessionService.sessionExistByToken(token);
+
+        if (Boolean.TRUE.equals(isValid)) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
     }
 
 }

@@ -19,15 +19,15 @@ public class SessionService {
         this.redisTemplate = redisTemplate;
     }
 
-    private Boolean sessionExistByToken(String token) {
+    public Boolean sessionExistByToken(String token) {
         return redisTemplate.hasKey(sessionKey + token);
     }
 
-    private Boolean sessionExistByKey(String key) {
+    public Boolean sessionExistByKey(String key) {
         return redisTemplate.hasKey(key);
     }
 
-    private Boolean setSession(String key, String userId) {
+    public Boolean setSession(String key, String userId) {
         log.debug("Setting session for user: {}", userId);
         redisTemplate.opsForValue().set(key, userId, Duration.ofDays(1));
 
@@ -39,12 +39,12 @@ public class SessionService {
         return Boolean.TRUE;
     }
 
-    private Boolean invalidateSession(String token) {
+    public Boolean invalidateSession(String token) {
         log.debug("Invalidating session for token: {}", token);
         return redisTemplate.delete(sessionKey + token);
     }
 
-    private void createSession(String token, String userId) {
+    public void createSession(String token, String userId) {
         log.debug("Creating session for user: {}", userId);
         log.debug("Checking for existing session");
 
