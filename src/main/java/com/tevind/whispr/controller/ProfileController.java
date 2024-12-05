@@ -10,6 +10,7 @@ import com.tevind.whispr.model.User;
 import com.tevind.whispr.security.CustomUserDetails;
 import com.tevind.whispr.service.ProfileService;
 import com.tevind.whispr.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class ProfileController {
 
     @PostMapping("/register")
     public ResponseEntity<ProfileResponseDto> registerUser(@RequestBody UserDto userDto) {
-        log.debug("Registering user with username: {}", userDto.getUserName());
+        log.debug("Registering user with username: {}", userDto.getUsername());
         User user = userService.createUser(userDto);
         Profile profile = profileService.findByDisplayName(user.getUserName());
 
@@ -45,7 +46,7 @@ public class ProfileController {
 
         log.debug("Successfully registered user");
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(profileResponseDto);
     }
 
@@ -57,7 +58,7 @@ public class ProfileController {
             Profile profile = profileService.findByDisplayName(userResponseDto.getUsername());
             return DtoConverter.toProfileResponse(profile, userResponseDto);
         } catch (Exception err) {
-            log.debug("Error getting user from security context");
+            log.error("Error getting user from security context", err);
             throw new AuthenticationErrorException("Error getting user from security context");
         }
     }

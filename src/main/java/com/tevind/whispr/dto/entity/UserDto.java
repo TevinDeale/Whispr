@@ -26,20 +26,19 @@ public class UserDto {
     @Pattern(regexp = "^[a-zA-Z\\s-]+$", message = "Name must contain only letters, spaces, and hyphens")
     private String lastName;
 
-    @NotBlank(message = "Username cannot be blank")
-    @Size(min = 5, max = 15, message = "Username has to be between 8 and 15 characters.")
+    @NotBlank(message = "Password cannot be blank")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
     message = "Password must contain 1 letter, 1 number, 1 special character and must be at least 8 characters")
-    private String userName;
+    private String password;
 
     @NotBlank(message = "Email cannot be blank")
     @Email
     private String email;
 
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 5, max= 20, message = "Password must be between 5 and 20 characters.")
-    @Pattern(regexp = "^[a-zA-z]")
-    private String password;
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 5, max= 20, message = "Username has to be between 5 and 20 characters")
+    @Pattern(regexp = "^[a-zA-z0-9]")
+    private String username;
 
     @Enumerated(EnumType.STRING)
     private Set<AccountRoles> accountRoles;

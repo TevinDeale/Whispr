@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +35,6 @@ public class Profile {
     private String displayName;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private ProfileStatus status;
 
     @Column(nullable = false)
@@ -42,4 +42,16 @@ public class Profile {
 
     @ManyToMany(mappedBy = "participants")
     private Set<Thread> threads = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof  Profile profile)) return false;
+        return profileId != null && profileId.equals(profile.profileId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(profileId);
+    }
 }

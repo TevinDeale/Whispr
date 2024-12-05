@@ -31,8 +31,8 @@ public class UserService {
 
     @Transactional
     public User createUser(UserDto dto) {
-        log.debug("Creating user with username: {}", dto.getUserName());
-        isDuplicateAttribute(dto.getUserName(), dto.getEmail());
+        log.debug("Creating user with username: {}", dto.getUsername());
+        isDuplicateAttribute(dto.getUsername(), dto.getEmail());
 
         User createdUser = DtoConverter.toUser(dto);
         createdUser.setPassword(encoder.encode(dto.getPassword()));

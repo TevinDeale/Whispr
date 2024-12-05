@@ -3,10 +3,10 @@ POST http://localhost:8083/api/v1/profile/register
 Content-Type: application/json
 
 {
-  "firstName": "Test",
-  "lastName": "User",
-  "userName": "testUser1",
-  "email": "testuser@example.com",
+  "firstName": "TestSecond",
+  "lastName": "UserSecond",
+  "userName": "testUserSecond",
+  "email": "testuser2@example.com",
   "password": "TestPassword1$"
 }
 
@@ -27,4 +27,20 @@ Authorization: Bearer {{auth_token}}
 
 ### POST logout user
 POST http://localhost:8083/api/v1/auth/logout
+Authorization: Bearer {{auth_token}}
+
+### POST create thread
+POST http://localhost:8083/api/v1/thread/create
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "threadName": "test-thread"
+}
+
+> {% client.global.set("test_thread", response.body.threadId) %}
+
+### Get get thread
+@threadId = 0dc45585-e1e8-41f6-a3ca-13b4f0ab5818
+GET http://localhost:8083/api/v1/thread/{{threadId}}
 Authorization: Bearer {{auth_token}}

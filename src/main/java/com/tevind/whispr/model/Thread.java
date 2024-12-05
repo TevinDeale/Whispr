@@ -24,17 +24,22 @@ public class Thread {
     @Column(name = "thread_id")
     private UUID threadId;
 
+    @Column(name = "thread_name", nullable = false)
+    private String threadName;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "thread_id")
+    @Builder.Default
     private List<Message> messages = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "thread_participants",
             joinColumns = @JoinColumn(name = "thread_id"),
             inverseJoinColumns = @JoinColumn(name = "profileId")
     )
     @Column(nullable = false)
+    @Builder.Default
     private Set<Profile> participants = new HashSet<>();
 
     @ElementCollection
@@ -45,6 +50,7 @@ public class Thread {
     @MapKeyJoinColumn(name = "profileId")
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Map<Profile, ThreadRoles> participantRoles = new HashMap<>();
 
     @Column(nullable = false)
@@ -52,5 +58,25 @@ public class Thread {
 
     @Column(nullable = false)
     @Builder.Default
-    private int maxParticipants = 2;
+    private int maxParticipants = 4;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Thread thread)) return false;
+        return threadId != null && threadId.equals(thread.threadId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(threadId);
+    }
+
+    public void addParticipant(Profile profile) {
+        participants.add(profile);
+    }
+
+    public void addParticipantRole(Profile profile, ThreadRoles role) {
+        participantRoles.put(profile, role);
+    }
 }

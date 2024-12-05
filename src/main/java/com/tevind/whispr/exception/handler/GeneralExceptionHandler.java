@@ -19,7 +19,7 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleException(
             Exception err,
             WebRequest request) {
-        log.debug("Handling general exception");
+        log.error("Handling general exception", err);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildErrorResponse(err, request, HttpStatus.INTERNAL_SERVER_ERROR));
@@ -93,8 +93,35 @@ public class GeneralExceptionHandler {
             Exception err,
             WebRequest request) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(buildErrorResponse(err, request, HttpStatus.INTERNAL_SERVER_ERROR));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(ThreadErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleThreadErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(ThreadNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleThreadNotFoundException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(buildErrorResponse(err, request, HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(MessageErrorException.class)
+    public ResponseEntity<ErrorResponseDto> handleMessageErrorException(
+            Exception err,
+            WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildErrorResponse(err, request, HttpStatus.BAD_REQUEST));
     }
 
     private String getPath(WebRequest request) {

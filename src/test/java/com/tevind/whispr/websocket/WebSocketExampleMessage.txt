@@ -1,0 +1,14 @@
+{
+  "messageType": "MESSAGE",
+  "message": {
+    "content": "Hello Fam",
+    "threadId": "0dc45585-e1e8-41f6-a3ca-13b4f0ab5818"
+  }
+}
+
+0dc45585-e1e8-41f6-a3ca-13b4f0ab5818
+
+{
+    "messageType": "SUBSCRIBE_THREAD",
+    "threadId": "0dc45585-e1e8-41f6-a3ca-13b4f0ab5818"
+}

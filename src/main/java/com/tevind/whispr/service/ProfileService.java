@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +48,18 @@ public class ProfileService {
 
         log.debug("Returning found profile with displayName: {}", foundProfile.getDisplayName());
         return foundProfile;
+    }
+
+    public Profile findById(UUID userId) {
+        log.debug("Finding profile by id: {}", userId);
+
+        Profile profile = profileRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("Profile with id: {} not found", userId);
+                    return new ProfileNotFoundException("Profile not found with id: " + userId);
+                });
+
+        log.debug("Returning found profile for user: {}",userId);
+        return profile;
     }
 }

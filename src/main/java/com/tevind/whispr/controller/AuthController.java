@@ -8,6 +8,7 @@ import com.tevind.whispr.dto.responses.BaseResponseDto;
 import com.tevind.whispr.exception.AuthenticationErrorException;
 import com.tevind.whispr.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
         TokenDto tokenDto = authService.login(loginDto);
 
         return ResponseEntity
